@@ -82,7 +82,7 @@ The system is built using a microservices architecture combined with an event-dr
 ## Documentation
 For detailed technical specifications, including APIs, database schema, and system design, see:
 
-- SRS Document: [SRS](./srs.md)
+- SRS Document: [Open](./srs.md)
 
 Or refer to the full SRS content here:
 :contentReference[oaicite:0]{index=0}
