@@ -3,6 +3,9 @@ package site.shazan.AuthService.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import site.shazan.AuthService.Dtos.LoginRequest;
+import site.shazan.AuthService.Dtos.RegisterRequest;
+import site.shazan.AuthService.Dtos.UserResponse;
 import site.shazan.AuthService.repo.UserClient;
 import site.shazan.AuthService.utils.JwtUtil;
 

@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0837928f-2e44-4db2-971c-8979751f687f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/AuthService/src/main/java/site/shazan/AuthService/Controller/AuthController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AuthService/src/main/java/site/shazan/AuthService/Service/AuthService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AuthService/src/main/java/site/shazan/AuthService/Service/KafkaProducerService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AuthService/src/main/java/site/shazan/AuthService/config/SecurityConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AuthService/src/main/java/site/shazan/AuthService/repo/UserClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AuthService/src/main/java/site/shazan/AuthService/utils/JwtUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthService/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/AuthService/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthService/src/main/java/site/shazan/AuthService/AuthServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/AuthService/src/main/java/site/shazan/AuthService/AuthServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthService/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/AuthService/src/main/resources/application.yml" afterDir="false" />
-    </list>
+    <list default="true" id="0837928f-2e44-4db2-971c-8979751f687f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -165,7 +153,7 @@
       <option name="presentableId" value="Default" />
       <updated>1775119118634</updated>
       <workItem from="1775130648684" duration="368000" />
-      <workItem from="1775133773236" duration="1049000" />
+      <workItem from="1775133773236" duration="1395000" />
     </task>
     <servers />
   </component>
