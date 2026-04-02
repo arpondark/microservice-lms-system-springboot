@@ -37,30 +37,30 @@ The LMS platform follows a **microservices architecture** with an **event-driven
 ```mermaid
 graph TB
     subgraph Client
-        C[Client / Frontend]
+        C["Client / Frontend"]
     end
 
     subgraph Infrastructure
-        EU[Eureka Server :8761]
-        KF[Apache Kafka :9092]
-        ZK[Zookeeper :2181]
-        DB[(PostgreSQL :5432<br/>lms_db)]
+        EU["Eureka Server :8761"]
+        KF["Apache Kafka :9092"]
+        ZK["Zookeeper :2181"]
+        DB[("PostgreSQL :5432 lms_db")]
     end
 
-    subgraph Auth Service [:8081]
-        AC[AuthController<br/>/auth/signup  /auth/login]
-        AS[AuthService]
-        JW[JwtUtil]
-        PE[PasswordEncoder<br/>BCrypt]
-        KP[KafkaProducerService]
-        UC[UserClient<br/>OpenFeign]
+    subgraph Auth-Service-8081
+        AC["AuthController /auth/signup /auth/login"]
+        AS["AuthService"]
+        JW["JwtUtil"]
+        PE["PasswordEncoder BCrypt"]
+        KP["KafkaProducerService"]
+        UC["UserClient OpenFeign"]
     end
 
-    subgraph User Service [:8082]
-        UCT[UserController<br/>/users  /users/email/{email}]
-        US[UserService]
-        UR[UserRepository<br/>JPA]
-        KC[KafkaConsumer]
+    subgraph User-Service-8082
+        UCT["UserController /users /users/email"]
+        US["UserService"]
+        UR["UserRepository JPA"]
+        KC["KafkaConsumer"]
     end
 
     C -->|HTTP POST| AC
@@ -75,8 +75,8 @@ graph TB
     US --> UR
     UR --> DB
 
-    KP -->|Publish 'user-created'| KF
-    KF -->|Consume 'user-created'| KC
+    KP -->|Publish user-created| KF
+    KF -->|Consume user-created| KC
     ZK --- KF
 
     AC -.->|Register| EU
@@ -159,13 +159,13 @@ After a successful signup, Auth Service publishes a `user-created` event to the 
 
 ```mermaid
 sequenceDiagram
-    participant AS as Auth Service<br/>(Producer)
-    participant KF as Kafka Broker<br/>(Topic: user-created)
-    participant US as User Service<br/>(Consumer Group: user-group)
+    participant AS as Auth Service (Producer)
+    participant KF as Kafka Broker (Topic: user-created)
+    participant US as User Service (Consumer: user-group)
 
     AS->>KF: Publish event (user email)
     KF-->>US: Deliver message
-    US->>US: Process event<br/>(log / notify / etc.)
+    US->>US: Process event (log / notify / etc.)
 ```
 
 **Producer (`KafkaProducerService.java`):**
@@ -299,9 +299,9 @@ Both services register with **Eureka Server** on startup. Auth Service resolves 
 
 ```mermaid
 graph LR
-    EU[Eureka Server<br/>:8761]
-    AS[Auth Service<br/>:8081<br/>name: Auth-Service]
-    US[User Service<br/>:8082<br/>name: USER-SERVICE]
+    EU["Eureka Server :8761"]
+    AS["Auth Service :8081"]
+    US["User Service :8082"]
 
     AS -->|Registers| EU
     US -->|Registers| EU
