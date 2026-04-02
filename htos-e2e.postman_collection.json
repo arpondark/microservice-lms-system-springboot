@@ -1,0 +1,179 @@
+{
+  "info": {
+    "name": "HTOS LMS E2E",
+    "description": "End-to-end tests for AuthService and UserService APIs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "authBaseUrl", "value": "http://localhost:8081" },
+    { "key": "userBaseUrl", "value": "http://localhost:8082" },
+    { "key": "testName", "value": "Postman E2E User" },
+    { "key": "testPassword", "value": "Pass@123" },
+    { "key": "testEmail", "value": "" },
+    { "key": "registeredEmail", "value": "" },
+    { "key": "jwtToken", "value": "" }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if (!pm.collectionVariables.get('testEmail')) {",
+          "  const unique = Date.now();",
+          "  pm.collectionVariables.set('testEmail', `e2e_${unique}@mail.com`);",
+          "}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "E2E Flow",
+      "item": [
+        {
+          "name": "1) Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{testName}}\",\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"{{testPassword}}\",\n  \"role\": \"ADMIN\"\n}"
+            },
+            "url": "{{authBaseUrl}}/auth/signup"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Signup status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Signup response message is correct', function () {",
+                  "  pm.expect(pm.response.text()).to.eql('User Registered');",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('registeredEmail', pm.collectionVariables.get('testEmail'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2) Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{registeredEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}"
+            },
+            "url": "{{authBaseUrl}}/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const token = pm.response.text().replace(/^\"|\"$/g, '');",
+                  "",
+                  "pm.test('Token is not empty', function () {",
+                  "  pm.expect(token).to.be.a('string').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Token looks like JWT', function () {",
+                  "  pm.expect(token.split('.')).to.have.lengthOf(3);",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('jwtToken', token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3) Get User By Email",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": "{{userBaseUrl}}/users/email/{{registeredEmail}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Get user status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const user = pm.response.json();",
+                  "",
+                  "pm.test('Email matches registered email', function () {",
+                  "  pm.expect(user.email).to.eql(pm.collectionVariables.get('registeredEmail'));",
+                  "});",
+                  "",
+                  "pm.test('Password should be stored encoded', function () {",
+                  "  pm.expect(user.password).to.not.eql(pm.collectionVariables.get('testPassword'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Negative Cases",
+      "item": [
+        {
+          "name": "Login with wrong password",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{registeredEmail}}\",\n  \"password\": \"wrong-password\"\n}"
+            },
+            "url": "{{authBaseUrl}}/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Wrong password should fail', function () {",
+                  "  pm.expect(pm.response.code).to.not.eql(200);",
+                  "});",
+                  "",
+                  "pm.test('Error mentions invalid credentials', function () {",
+                  "  pm.expect(pm.response.text().toLowerCase()).to.include('invalid credentials');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

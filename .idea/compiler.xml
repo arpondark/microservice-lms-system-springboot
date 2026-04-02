@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -18,9 +19,19 @@
         </processorPath>
         <module name="AuthService" />
       </profile>
+      <profile name="Annotation profile for UserService" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
+        </processorPath>
+        <module name="UserService" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="USER-SERRVICE" target="25" />
+      <module name="USER-SERVICE" target="25" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -28,6 +39,8 @@
       <module name="AuthService" options="-parameters" />
       <module name="EurekaServer" options="-parameters" />
       <module name="USER-SERRVICE" options="-parameters" />
+      <module name="USER-SERVICE" options="-parameters" />
+      <module name="UserService" options="-parameters" />
     </option>
   </component>
 </project>

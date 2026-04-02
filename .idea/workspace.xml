@@ -4,7 +4,34 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0837928f-2e44-4db2-971c-8979751f687f" name="Changes" comment="" />
+    <list default="true" id="0837928f-2e44-4db2-971c-8979751f687f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/UserService/src/main/java/site/shazan/UserService/controller/UserController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UserService/src/main/java/site/shazan/UserService/dtos/LoginRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UserService/src/main/java/site/shazan/UserService/dtos/RegisterRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UserService/src/main/java/site/shazan/UserService/dtos/UserResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UserService/src/main/java/site/shazan/UserService/kafka/KafkaConsumer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UserService/src/main/java/site/shazan/UserService/models/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UserService/src/main/java/site/shazan/UserService/repo/UserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UserService/src/main/java/site/shazan/UserService/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/src/main/java/site/shazan/USER_SERRVICE/UserSerrviceApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/src/main/java/site/shazan/USER_SERRVICE/dto/CreateUserRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/src/main/java/site/shazan/USER_SERRVICE/models/Role.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/src/main/java/site/shazan/USER_SERRVICE/models/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/src/main/java/site/shazan/USER_SERRVICE/repository/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/src/main/java/site/shazan/USER_SERRVICE/service/UserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/USER-SERRVICE/src/test/java/site/shazan/USER_SERRVICE/UserSerrviceApplicationTests.java" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,7 +43,7 @@
     </persistenceIdMap>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="33" />
+    <option name="cachedIndexableFilesCount" value="42" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -82,10 +109,12 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.AuthServiceApplication.executor": "Run",
     "Spring Boot.EurekaServerApplication.executor": "Run",
+    "Spring Boot.UserServiceApplication (1).executor": "Run",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Administrator/Desktop/microservice-lms-system-springboot/UserService/src/main/java/site/shazan/UserService/dtos",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -99,6 +128,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Administrator\Desktop\microservice-lms-system-springboot\UserService\src\main\java\site\shazan\UserService\dtos" />
+    </key>
+  </component>
   <component name="RunDashboard">
     <option name="configurationTypes">
       <set>
@@ -121,7 +155,7 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.AuthServiceApplication">
+  <component name="RunManager" selected="Spring Boot.EurekaServerApplication">
     <configuration name="AuthServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="AuthService" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="site.shazan.AuthService.AuthServiceApplication" />
@@ -132,6 +166,13 @@
     <configuration name="EurekaServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="EurekaServer" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="site.shazan.EurekaServer.EurekaServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserServiceApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="UserService" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="site.shazan.UserService.UserServiceApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -153,7 +194,8 @@
       <option name="presentableId" value="Default" />
       <updated>1775119118634</updated>
       <workItem from="1775130648684" duration="368000" />
-      <workItem from="1775133773236" duration="1395000" />
+      <workItem from="1775133773236" duration="2191000" />
+      <workItem from="1775136016036" duration="628000" />
     </task>
     <servers />
   </component>

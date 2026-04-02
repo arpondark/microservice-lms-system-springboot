@@ -1,13 +1,13 @@
-package site.shazan.USER_SERRVICE;
+package site.shazan.UserService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class UserSerrviceApplication {
+public class UserServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(UserSerrviceApplication.class, args);
+		SpringApplication.run(UserServiceApplication.class, args);
 	}
 
 }

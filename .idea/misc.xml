@@ -7,6 +7,8 @@
         <option value="$PROJECT_DIR$/USER-SERRVICE/pom.xml" />
         <option value="$PROJECT_DIR$/EurekaServer/pom.xml" />
         <option value="$PROJECT_DIR$/AuthService/pom.xml" />
+        <option value="$PROJECT_DIR$/USER-SERVICE/pom.xml" />
+        <option value="$PROJECT_DIR$/UserService/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
