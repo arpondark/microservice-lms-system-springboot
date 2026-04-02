@@ -1,10 +1,10 @@
-package site.shazan.USER_SERRVICE;
+package site.shazan.EurekaServer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class UserSerrviceApplicationTests {
+class EurekaServerApplicationTests {
 
 	@Test
 	void contextLoads() {
