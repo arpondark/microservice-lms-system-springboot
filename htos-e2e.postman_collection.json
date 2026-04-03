@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "HTOS LMS E2E",
-    "description": "End-to-end tests for AuthService and UserService APIs.",
+    "description": "End-to-end tests for AuthService and UserService APIs, including hashed password creation and admin-only user creation.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -11,7 +11,16 @@
     { "key": "testPassword", "value": "Pass@123" },
     { "key": "testEmail", "value": "" },
     { "key": "registeredEmail", "value": "" },
-    { "key": "jwtToken", "value": "" }
+    { "key": "jwtToken", "value": "" },
+    { "key": "teacherName", "value": "Postman Teacher" },
+    { "key": "teacherEmail", "value": "" },
+    { "key": "teacherPassword", "value": "Teacher@123" },
+    { "key": "adminLoginEmail", "value": "admin@gmail.com" },
+    { "key": "adminLoginPassword", "value": "admin1234" },
+    { "key": "adminCreatedName", "value": "Postman Admin" },
+    { "key": "adminCreatedEmail", "value": "" },
+    { "key": "adminCreatedPassword", "value": "Admin@123" },
+    { "key": "adminJwtToken", "value": "" }
   ],
   "event": [
     {
@@ -22,6 +31,14 @@
           "if (!pm.collectionVariables.get('testEmail')) {",
           "  const unique = Date.now();",
           "  pm.collectionVariables.set('testEmail', `e2e_${unique}@mail.com`);",
+          "}",
+          "if (!pm.collectionVariables.get('teacherEmail')) {",
+          "  const unique = Date.now();",
+          "  pm.collectionVariables.set('teacherEmail', `teacher_${unique}@mail.com`);",
+          "}",
+          "if (!pm.collectionVariables.get('adminCreatedEmail')) {",
+          "  const unique = Date.now();",
+          "  pm.collectionVariables.set('adminCreatedEmail', `admin_${unique}@mail.com`);",
           "}"
         ]
       }
@@ -40,7 +57,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"{{testName}}\",\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"{{testPassword}}\",\n  \"role\": \"ADMIN\"\n}"
+              "raw": "{\n  \"name\": \"{{testName}}\",\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"{{testPassword}}\",\n  \"role\": \"STUDENT\"\n}"
             },
             "url": "{{authBaseUrl}}/auth/signup"
           },
@@ -130,6 +147,168 @@
                   "",
                   "pm.test('Password should be stored encoded', function () {",
                   "  pm.expect(user.password).to.not.eql(pm.collectionVariables.get('testPassword'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "User Service Account Creation",
+      "item": [
+        {
+          "name": "1) Login as Seeded Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminLoginEmail}}\",\n  \"password\": \"{{adminLoginPassword}}\"\n}"
+            },
+            "url": "{{authBaseUrl}}/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Admin login status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const token = pm.response.text().replace(/^\"|\"$/g, '');",
+                  "pm.collectionVariables.set('adminJwtToken', token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2) Create Teacher Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{teacherName}}\",\n  \"email\": \"{{teacherEmail}}\",\n  \"password\": \"{{teacherPassword}}\",\n  \"role\": \"TEACHER\"\n}"
+            },
+            "url": "{{userBaseUrl}}/users"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Teacher create status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const user = pm.response.json();",
+                  "pm.test('Teacher password is stored encoded', function () {",
+                  "  pm.expect(user.password).to.not.eql(pm.collectionVariables.get('teacherPassword'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3) Get Teacher By Email",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": "{{userBaseUrl}}/users/email/{{teacherEmail}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Get teacher status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const user = pm.response.json();",
+                  "pm.test('Teacher password stays encoded', function () {",
+                  "  pm.expect(user.password).to.not.eql(pm.collectionVariables.get('teacherPassword'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4) Create Admin Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminJwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{adminCreatedName}}\",\n  \"email\": \"{{adminCreatedEmail}}\",\n  \"password\": \"{{adminCreatedPassword}}\",\n  \"role\": \"ADMIN\"\n}"
+            },
+            "url": "{{userBaseUrl}}/users/admin/create"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Admin create status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const user = pm.response.json();",
+                  "pm.test('Admin password is stored encoded', function () {",
+                  "  pm.expect(user.password).to.not.eql(pm.collectionVariables.get('adminCreatedPassword'));",
+                  "});",
+                  "pm.test('Created user role is ADMIN', function () {",
+                  "  pm.expect(user.role).to.eql('ADMIN');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5) Get Created Admin By Email",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": "{{userBaseUrl}}/users/email/{{adminCreatedEmail}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Get created admin status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const user = pm.response.json();",
+                  "pm.test('Created admin password stays encoded', function () {",
+                  "  pm.expect(user.password).to.not.eql(pm.collectionVariables.get('adminCreatedPassword'));",
+                  "});",
+                  "pm.test('Created admin role is ADMIN', function () {",
+                  "  pm.expect(user.role).to.eql('ADMIN');",
                   "});"
                 ]
               }
