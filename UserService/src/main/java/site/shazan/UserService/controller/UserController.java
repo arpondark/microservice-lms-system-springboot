@@ -22,4 +22,9 @@ public class UserController {
     public User get(@PathVariable String email) {
         return service.getByEmail(email);
     }
+
+    @PostMapping("/admin/create")
+     public User adminController(@RequestBody RegisterRequest req) {
+         return service.adminCreation(req);
+     }
 }

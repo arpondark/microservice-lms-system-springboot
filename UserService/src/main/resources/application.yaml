@@ -6,7 +6,7 @@ spring:
     name: USER-SERVICE
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/lms_db
+    url: jdbc:postgresql://localhost:5432/lmsdb
     username: postgres
     password: arpon007
 
@@ -21,3 +21,11 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+jwt:
+  secret: mysecretkeyghfhsrfrliueoiriflhlisduhgedufhgdshgsiod
+
+admin:
+  seed: false
+  email: admin@gmail.com
+  password: admin1234
