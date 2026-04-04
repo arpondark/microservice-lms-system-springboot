@@ -39,9 +39,16 @@ public class UserService {
         user.setName(req.getName() == null || req.getName().isBlank() ? "Admin" : req.getName());
         user.setEmail(req.getEmail());
         user.setPassword(passwordEncoder.encode(req.getPassword()));
-        user.setRole("ADMIN");
+        user.setRole(req.getRole());
 
         return repo.save(user);
+    }
+
+    public String adminDelete(String email) {
+        User user = repo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        repo.delete(user);
+        return "User deleted";
     }
 
 

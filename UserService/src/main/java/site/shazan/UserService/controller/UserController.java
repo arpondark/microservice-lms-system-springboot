@@ -27,4 +27,9 @@ public class UserController {
      public User adminController(@RequestBody RegisterRequest req) {
          return service.adminCreation(req);
      }
+
+    @DeleteMapping("/admin/delete/{email}")
+    public String adminDelete(@PathVariable String email) {
+        return service.adminDelete(email);
+    }
 }
