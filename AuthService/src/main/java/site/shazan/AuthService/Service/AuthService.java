@@ -28,7 +28,7 @@ public class AuthService {
     public String signup(RegisterRequest request) {
 
         request.setPassword(passwordEncoder.encode(request.getPassword()));
-        request.setRole("STUDENT");
+        request.setRole(String.valueOf(Role.STUDENT));
 
         userClient.createUser(request);
 

@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "HTOS LMS E2E",
-    "description": "End-to-end tests for AuthService and UserService APIs, including hashed password creation and admin-only user creation.",
+    "description": "End-to-end tests for AuthService and UserService APIs, including hashed password creation and admin-only user management.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -20,6 +20,7 @@
     { "key": "adminCreatedName", "value": "Postman Admin" },
     { "key": "adminCreatedEmail", "value": "" },
     { "key": "adminCreatedPassword", "value": "Admin@123" },
+    { "key": "adminCreatedRole", "value": "STUDENT" },
     { "key": "adminJwtToken", "value": "" }
   ],
   "event": [
@@ -249,7 +250,7 @@
           ]
         },
         {
-          "name": "4) Create Admin Account",
+          "name": "4) Create User via Admin Controller",
           "request": {
             "method": "POST",
             "header": [
@@ -258,9 +259,9 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"{{adminCreatedName}}\",\n  \"email\": \"{{adminCreatedEmail}}\",\n  \"password\": \"{{adminCreatedPassword}}\",\n  \"role\": \"ADMIN\"\n}"
+              "raw": "{\n  \"name\": \"{{adminCreatedName}}\",\n  \"email\": \"{{adminCreatedEmail}}\",\n  \"password\": \"{{adminCreatedPassword}}\",\n  \"role\": \"{{adminCreatedRole}}\"\n}"
             },
-            "url": "{{userBaseUrl}}/users/admin/create"
+            "url": "{{authBaseUrl}}/admin/create"
           },
           "event": [
             {
@@ -273,11 +274,11 @@
                   "});",
                   "",
                   "const user = pm.response.json();",
-                  "pm.test('Admin password is stored encoded', function () {",
+                  "pm.test('Created user password is stored encoded', function () {",
                   "  pm.expect(user.password).to.not.eql(pm.collectionVariables.get('adminCreatedPassword'));",
                   "});",
-                  "pm.test('Created user role is ADMIN', function () {",
-                  "  pm.expect(user.role).to.eql('ADMIN');",
+                  "pm.test('Created user role matches requested role', function () {",
+                  "  pm.expect(user.role).to.eql(pm.collectionVariables.get('adminCreatedRole'));",
                   "});"
                 ]
               }
@@ -285,7 +286,7 @@
           ]
         },
         {
-          "name": "5) Get Created Admin By Email",
+          "name": "5) Get Created User By Email",
           "request": {
             "method": "GET",
             "header": [
@@ -299,16 +300,43 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Get created admin status is 200', function () {",
+                  "pm.test('Get created user status is 200', function () {",
                   "  pm.response.to.have.status(200);",
                   "});",
                   "",
                   "const user = pm.response.json();",
-                  "pm.test('Created admin password stays encoded', function () {",
+                  "pm.test('Created user password stays encoded', function () {",
                   "  pm.expect(user.password).to.not.eql(pm.collectionVariables.get('adminCreatedPassword'));",
                   "});",
-                  "pm.test('Created admin role is ADMIN', function () {",
-                  "  pm.expect(user.role).to.eql('ADMIN');",
+                  "pm.test('Created user role matches requested role', function () {",
+                  "  pm.expect(user.role).to.eql(pm.collectionVariables.get('adminCreatedRole'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6) Delete Created User via Admin Controller",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminJwtToken}}" }
+            ],
+            "url": "{{authBaseUrl}}/admin/delete/{{adminCreatedEmail}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Admin delete status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Delete response message is correct', function () {",
+                  "  pm.expect(pm.response.text()).to.eql('User deleted');",
                   "});"
                 ]
               }
