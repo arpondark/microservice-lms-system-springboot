@@ -21,5 +21,5 @@ public class Course {
     private String teacherName;
     private String videoUrl;
     private String courseMaterialUrl;
-    private String comment;
+
 }
