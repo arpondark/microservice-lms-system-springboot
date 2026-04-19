@@ -30,6 +30,6 @@ jwt:
   secret: mysecretkeyghfhsrfrliueoiriflhlisduhgedufhgdshgsiod
 
 admin:
-  seed: false
+  seed: true
   email: admin@gmail.com
   password: admin1234

@@ -43,7 +43,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     && SecurityContextHolder.getContext().getAuthentication() == null) {
                 setAuthentication(request, email, role);
             }
-        } catch (RuntimeException ex) {
+        } catch (Exception ex) {
+            // Log but don't fail - let request proceed to controller
+            // Controller will handle authentication if needed
             SecurityContextHolder.clearContext();
         }
 
