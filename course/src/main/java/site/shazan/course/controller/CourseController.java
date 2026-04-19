@@ -1,7 +1,7 @@
 package site.shazan.course.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.shazan.course.models.Course;
@@ -28,9 +28,12 @@ public class CourseController {
     ) {
 
         Long userId = (Long) auth.getPrincipal();
-        String role = auth.getAuthorities().iterator().next().getAuthority();
+        String role = auth.getAuthorities().stream()
+                .findFirst()
+                .map(Object::toString)
+                .orElse("");
 
-        if (!role.equals("ADMIN") && !role.equals("TEACHER")) {
+        if (!"ADMIN".equals(role) && !"TEACHER".equals(role)) {
             throw new RuntimeException("Only teacher/admin allowed");
         }
 
