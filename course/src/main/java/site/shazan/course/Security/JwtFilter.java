@@ -36,7 +36,7 @@ public class JwtFilter extends GenericFilter {
                     .parseSignedClaims(token)
                     .getPayload();
 
-            Long userId = Long.parseLong(claims.getSubject());
+            Long userId = claims.get("id", Long.class);
             String role = claims.get("role", String.class);
 
             UsernamePasswordAuthenticationToken auth =
