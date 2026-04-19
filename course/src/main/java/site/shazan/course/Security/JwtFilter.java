@@ -7,6 +7,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +44,7 @@ public class JwtFilter extends GenericFilter {
                     new UsernamePasswordAuthenticationToken(
                             userId,
                             null,
-                            List.of(() -> role)
+                            List.of(new SimpleGrantedAuthority(role))
                     );
 
             SecurityContextHolder.getContext().setAuthentication(auth);
@@ -52,3 +53,5 @@ public class JwtFilter extends GenericFilter {
         chain.doFilter(request, response);
     }
 }
+
+
