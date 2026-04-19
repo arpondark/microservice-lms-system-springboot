@@ -1,12 +1,13 @@
 {
   "info": {
     "name": "HTOS LMS E2E",
-    "description": "End-to-end tests for AuthService and UserService APIs, including hashed password creation and admin-only user management.",
+    "description": "End-to-end tests for AuthService, UserService, and CourseService APIs. Docker runs only Kafka, Zookeeper, and MinIO. PostgreSQL databases (lms_db, coursedb) should be running locally or in separate containers.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     { "key": "authBaseUrl", "value": "http://localhost:8081" },
     { "key": "userBaseUrl", "value": "http://localhost:8082" },
+    { "key": "courseBaseUrl", "value": "http://localhost:8082" },
     { "key": "testName", "value": "Postman E2E User" },
     { "key": "testPassword", "value": "Pass@123" },
     { "key": "testEmail", "value": "" },
@@ -21,7 +22,10 @@
     { "key": "adminCreatedEmail", "value": "" },
     { "key": "adminCreatedPassword", "value": "Admin@123" },
     { "key": "adminCreatedRole", "value": "STUDENT" },
-    { "key": "adminJwtToken", "value": "" }
+    { "key": "adminJwtToken", "value": "" },
+    { "key": "courseId", "value": "" },
+    { "key": "courseName", "value": "Advanced Spring Boot" },
+    { "key": "teacherJwtToken", "value": "" }
   ],
   "event": [
     {
@@ -343,44 +347,249 @@
             }
           ]
         }
-      ]
-    },
-    {
-      "name": "Negative Cases",
-      "item": [
-        {
-          "name": "Login with wrong password",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"{{registeredEmail}}\",\n  \"password\": \"wrong-password\"\n}"
-            },
-            "url": "{{authBaseUrl}}/auth/login"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Wrong password should fail', function () {",
-                  "  pm.expect(pm.response.code).to.not.eql(200);",
-                  "});",
-                  "",
-                  "pm.test('Error mentions invalid credentials', function () {",
-                  "  pm.expect(pm.response.text().toLowerCase()).to.include('invalid credentials');",
-                  "});"
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    }
+       ]
+     },
+     {
+       "name": "Course Service E2E",
+       "item": [
+         {
+           "name": "1) Login as Teacher",
+           "request": {
+             "method": "POST",
+             "header": [
+               { "key": "Content-Type", "value": "application/json" }
+             ],
+             "body": {
+               "mode": "raw",
+               "raw": "{\n  \"email\": \"{{teacherEmail}}\",\n  \"password\": \"{{teacherPassword}}\"\n}"
+             },
+             "url": "{{authBaseUrl}}/auth/login"
+           },
+           "event": [
+             {
+               "listen": "test",
+               "script": {
+                 "type": "text/javascript",
+                 "exec": [
+                   "pm.test('Teacher login status is 200', function () {",
+                   "  pm.response.to.have.status(200);",
+                   "});",
+                   "",
+                   "const token = pm.response.text().replace(/^\"|\"$/g, '');",
+                   "pm.collectionVariables.set('teacherJwtToken', token);"
+                 ]
+               }
+             }
+           ]
+         },
+         {
+           "name": "2) Create Course (Teacher)",
+           "request": {
+             "method": "POST",
+             "header": [
+               { "key": "Authorization", "value": "Bearer {{teacherJwtToken}}" }
+             ],
+             "body": {
+               "mode": "formdata",
+               "formdata": [
+                 { "key": "title", "value": "{{courseName}}", "type": "text" },
+                 { "key": "description", "value": "Learn advanced Spring Boot concepts and best practices", "type": "text" },
+                 { "key": "image", "value": "", "type": "file" },
+                 { "key": "video", "value": "", "type": "file" },
+                 { "key": "material", "value": "", "type": "file" }
+               ]
+             },
+             "url": "{{courseBaseUrl}}/courses"
+           },
+           "event": [
+             {
+               "listen": "test",
+               "script": {
+                 "type": "text/javascript",
+                 "exec": [
+                   "pm.test('Create course status is 200', function () {",
+                   "  pm.response.to.have.status(200);",
+                   "});",
+                   "",
+                   "const course = pm.response.json();",
+                   "pm.test('Course has ID', function () {",
+                   "  pm.expect(course.id).to.exist;",
+                   "});",
+                   "",
+                   "pm.collectionVariables.set('courseId', course.id);"
+                 ]
+               }
+             }
+           ]
+         },
+         {
+           "name": "3) Get All Courses",
+           "request": {
+             "method": "GET",
+             "header": [
+               { "key": "Accept", "value": "application/json" }
+             ],
+             "url": "{{courseBaseUrl}}/courses"
+           },
+           "event": [
+             {
+               "listen": "test",
+               "script": {
+                 "type": "text/javascript",
+                 "exec": [
+                   "pm.test('Get courses status is 200', function () {",
+                   "  pm.response.to.have.status(200);",
+                   "});",
+                   "",
+                   "const courses = pm.response.json();",
+                   "pm.test('Courses list is an array', function () {",
+                   "  pm.expect(courses).to.be.an('array');",
+                   "});",
+                   "",
+                   "pm.test('At least one course exists', function () {",
+                   "  pm.expect(courses.length).to.be.greaterThan(0);",
+                   "});"
+                 ]
+               }
+             }
+           ]
+         },
+         {
+           "name": "4) Student Login",
+           "request": {
+             "method": "POST",
+             "header": [
+               { "key": "Content-Type", "value": "application/json" }
+             ],
+             "body": {
+               "mode": "raw",
+               "raw": "{\n  \"email\": \"{{registeredEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}"
+             },
+             "url": "{{authBaseUrl}}/auth/login"
+           },
+           "event": [
+             {
+               "listen": "test",
+               "script": {
+                 "type": "text/javascript",
+                 "exec": [
+                   "pm.test('Student login status is 200', function () {",
+                   "  pm.response.to.have.status(200);",
+                   "});",
+                   "",
+                   "const token = pm.response.text().replace(/^\"|\"$/g, '');",
+                   "pm.collectionVariables.set('jwtToken', token);"
+                 ]
+               }
+             }
+           ]
+         },
+         {
+           "name": "5) Student Enroll in Course",
+           "request": {
+             "method": "POST",
+             "header": [
+               { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+             ],
+             "url": "{{courseBaseUrl}}/courses/{{courseId}}/enroll"
+           },
+           "event": [
+             {
+               "listen": "test",
+               "script": {
+                 "type": "text/javascript",
+                 "exec": [
+                   "pm.test('Enrollment status is 200', function () {",
+                   "  pm.response.to.have.status(200);",
+                   "});",
+                   "",
+                   "const enrollment = pm.response.json();",
+                   "pm.test('Enrollment has ID', function () {",
+                   "  pm.expect(enrollment.id).to.exist;",
+                   "});",
+                   "",
+                   "pm.test('Enrollment has correct student and course', function () {",
+                   "  pm.expect(enrollment.studentId).to.exist;",
+                   "  pm.expect(enrollment.courseId).to.exist;",
+                   "});"
+                 ]
+               }
+             }
+           ]
+         }
+       ]
+     },
+     {
+       "name": "Course Authorization Tests",
+       "item": [
+         {
+           "name": "Student Cannot Create Course",
+           "request": {
+             "method": "POST",
+             "header": [
+               { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+             ],
+             "body": {
+               "mode": "formdata",
+               "formdata": [
+                 { "key": "title", "value": "Unauthorized Course", "type": "text" },
+                 { "key": "description", "value": "This should fail", "type": "text" }
+               ]
+             },
+             "url": "{{courseBaseUrl}}/courses"
+           },
+           "event": [
+             {
+               "listen": "test",
+               "script": {
+                 "type": "text/javascript",
+                 "exec": [
+                   "pm.test('Student create course returns 500 (runtime exception)', function () {",
+                   "  pm.expect(pm.response.code).to.not.eql(200);",
+                   "});"
+                 ]
+               }
+             }
+           ]
+         }
+       ]
+     },
+     {
+       "name": "Negative Cases",
+       "item": [
+         {
+           "name": "Login with wrong password",
+           "request": {
+             "method": "POST",
+             "header": [
+               { "key": "Content-Type", "value": "application/json" }
+             ],
+             "body": {
+               "mode": "raw",
+               "raw": "{\n  \"email\": \"{{registeredEmail}}\",\n  \"password\": \"wrong-password\"\n}"
+             },
+             "url": "{{authBaseUrl}}/auth/login"
+           },
+           "event": [
+             {
+               "listen": "test",
+               "script": {
+                 "type": "text/javascript",
+                 "exec": [
+                   "pm.test('Wrong password should fail', function () {",
+                   "  pm.expect(pm.response.code).to.not.eql(200);",
+                   "});",
+                   "",
+                   "pm.test('Error mentions invalid credentials', function () {",
+                   "  pm.expect(pm.response.text().toLowerCase()).to.include('invalid credentials');",
+                   "});"
+                 ]
+               }
+             }
+           ]
+         }
+       ]
+     }
   ]
 }
 

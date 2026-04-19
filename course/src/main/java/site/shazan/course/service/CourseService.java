@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import site.shazan.course.kafka.KafkaProducerService;
 import site.shazan.course.models.*;
 import site.shazan.course.repo.CourseRepository;
 import site.shazan.course.repo.EnrollmentRepository;
@@ -17,6 +18,7 @@ public class CourseService {
     private final CourseRepository courseRepo;
     private final EnrollmentRepository enrollRepo;
     private final MinioService minio;
+    private final KafkaProducerService kafkaProducerService;
 
     @Value("${minio.image-bucket}")
     private String imageBucket;
@@ -42,7 +44,16 @@ public class CourseService {
         course.setTeacherId(teacherId);
         course.setStatus("PUBLISHED");
 
-        return courseRepo.save(course);
+        Course savedCourse = courseRepo.save(course);
+
+        // Publish course creation event
+        kafkaProducerService.publishCourseCreatedEvent(
+            savedCourse.getId().toString(),
+            savedCourse.getCourseName(),
+            teacherId.toString()
+        );
+
+        return savedCourse;
     }
 
     public List<Course> getAll() {
@@ -55,6 +66,13 @@ public class CourseService {
         e.setStudentId(studentId);
         e.setCourseId(courseId);
 
-        return enrollRepo.save(e);
+        Enrollment savedEnrollment = enrollRepo.save(e);
+
+        // Publish enrollment event
+        kafkaProducerService.publishEnrollmentEvent(savedEnrollment);
+
+        return savedEnrollment;
     }
 }
+
+
