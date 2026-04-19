@@ -32,14 +32,25 @@ public class CourseService {
     public Course create(
             Course course,
             MultipartFile image,
-            MultipartFile video,
+            String videoUrl,
             MultipartFile material,
             Long teacherId
     ) {
 
-        course.setImageUrl(minio.upload(image, imageBucket));
-        course.setVideoUrl(minio.upload(video, videoBucket));
-        course.setCourseMaterialUrl(minio.upload(material, materialBucket));
+        // Upload image only if provided
+        if (image != null && !image.isEmpty()) {
+            course.setImageUrl(minio.upload(image, imageBucket));
+        }
+
+        // Set video URL directly (can be a link)
+        if (videoUrl != null && !videoUrl.isEmpty()) {
+            course.setVideoUrl(videoUrl);
+        }
+
+        // Upload material only if provided
+        if (material != null && !material.isEmpty()) {
+            course.setCourseMaterialUrl(minio.upload(material, materialBucket));
+        }
 
         course.setTeacherId(teacherId);
         course.setStatus("PUBLISHED");
@@ -58,6 +69,10 @@ public class CourseService {
 
     public List<Course> getAll() {
         return courseRepo.findAll();
+    }
+
+    public List<Course> getCoursesByTeacher(Long teacherId) {
+        return courseRepo.findByTeacherId(teacherId);
     }
 
     public Enrollment enroll(Long studentId, Long courseId) {

@@ -22,9 +22,9 @@ public class CourseController {
     public Course create(
             Authentication auth,
             @ModelAttribute Course course,
-            @RequestParam MultipartFile image,
-            @RequestParam MultipartFile video,
-            @RequestParam MultipartFile material
+            @RequestParam(required = false) MultipartFile image,
+            @RequestParam(required = false) String videoUrl,
+            @RequestParam(required = false) MultipartFile material
     ) {
 
         Long userId = (Long) auth.getPrincipal();
@@ -37,12 +37,17 @@ public class CourseController {
             throw new RuntimeException("Only teacher/admin allowed");
         }
 
-        return service.create(course, image, video, material, userId);
+        return service.create(course, image, videoUrl, material, userId);
     }
 
     @GetMapping
     public List<Course> all() {
         return service.getAll();
+    }
+
+    @GetMapping("/teacher/{teacherId}")
+    public List<Course> getTeacherCourses(@PathVariable Long teacherId) {
+        return service.getCoursesByTeacher(teacherId);
     }
 
     @PostMapping("/{courseId}/enroll")
