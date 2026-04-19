@@ -24,8 +24,8 @@ public class Course {
     private String videoUrl;
     private String courseMaterialUrl;
 
-    private Long teacherId;   // 🔥 from JWT
+    private Long teacherId;
     private String teacherName;
 
-    private String status; // DRAFT / PUBLISHED
+    private String status;
 }
