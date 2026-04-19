@@ -27,7 +27,7 @@ server:
       max-request-size: 10000MB
 
 jwt:
-  secret: your-secret-key-should-be-at-least-32-characters-long-for-HS256
+  secret: mysecretkeyghfhsrfrliueoiriflhlisduhgedufhgdshgsiod
 
 eureka:
   client:
