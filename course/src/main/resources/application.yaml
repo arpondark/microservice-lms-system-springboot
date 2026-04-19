@@ -20,7 +20,11 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 server:
-  port: 8082
+  port: 8083
+  servlet:
+    multipart:
+      max-file-size: 10000MB
+      max-request-size: 10000MB
 
 jwt:
   secret: your-secret-key-should-be-at-least-32-characters-long-for-HS256
